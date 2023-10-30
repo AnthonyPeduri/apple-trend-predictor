@@ -1,0 +1,1 @@
+# apple-trend-predictor
