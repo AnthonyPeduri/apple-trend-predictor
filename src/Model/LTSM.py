@@ -51,7 +51,7 @@ model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 
 early_stop = EarlyStopping(monitor='val_loss', patience=5)
-model.fit(trainX, trainY, epochs=50, batch_size=5, verbose=2, callbacks=[early_stop], validation_data=(testX, testY))
+model.fit(trainX, trainY, epochs=5, batch_size=5, verbose=2, callbacks=[early_stop], validation_data=(testX, testY))
 
 # Predict on the test data
 test_predictions = model.predict(testX)
