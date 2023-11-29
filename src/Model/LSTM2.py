@@ -1,30 +1,34 @@
 import math
 import pandas as pd
 import numpy as np
+from Scraper import Scraper
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 
+apple_stock = Scraper("aapl", "MAX")
+apple_history = apple_stock.getAll()
+print(apple_history)
 # Load and preprocess the data
-df = pd.read_csv("src/Data/sep100.csv")
-df["Date"] = pd.to_datetime(df.Date)
-df = df.set_index("Date")
+# df = pd.read_csv("src/Data/sep100.csv")
+# df["Date"] = pd.to_datetime(df.Date)
+# df = df.set_index("Date")
+#top_df = df[["MSFT", "AAPL", "GOOG", "ACN"]].copy()
+apple_history["AAPL_10"] = apple_history['Close'].rolling(10).mean()
+apple_history["AAPL_30"] = apple_history['Close'].rolling(30).mean()
+apple_history["AAPL_50"] = apple_history['Close'].rolling(50).mean()
 
-top_df = df[["MSFT", "AAPL", "GOOG", "ACN"]].copy()
-top_df["AAPL_10"] = top_df["AAPL"].rolling(10).mean()
-top_df["AAPL_30"] = top_df["AAPL"].rolling(30).mean()
-top_df["AAPL_50"] = top_df["AAPL"].rolling(50).mean()
-
-apple = top_df[["AAPL", "AAPL_10", "AAPL_30", "AAPL_50"]]
+print(apple_history)
+apple = apple_history[["Close", "AAPL_10", "AAPL_30", "AAPL_50"]]
 split_date = '2021-01-01'
 apple_train = apple.loc[apple.index <= split_date].copy()
 apple_test = apple.loc[apple.index > split_date].copy()
 
 # Preprocessing
 scaler = MinMaxScaler(feature_range=(0, 1))
-apple_train_scaled = scaler.fit_transform(apple_train[['AAPL']])
-apple_test_scaled = scaler.transform(apple_test[['AAPL']])  # Use the same scaler to ensure consistency
+apple_train_scaled = scaler.fit_transform(apple_train[['Close']])
+apple_test_scaled = scaler.transform(apple_test[['Close']])  # Use the same scaler to ensure consistency
 
 n_input = 10
 
@@ -56,8 +60,8 @@ model.compile(optimizer='adam',
 # Train the model
 history = model.fit(
     X_train, y_train,
-    epochs=21,
-    batch_size=32,
+    epochs=20,
+    batch_size=128,
     validation_data=(X_test, y_test),
     verbose=1,
     callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)]
@@ -83,8 +87,6 @@ y_pred_rescaled = scaler.inverse_transform(y_pred)
 
 # Adjust the test data to have the correct date index
 trimmed_test_index = apple_test.index[n_input:]
-
-
 
 # Plotting actual and forecasted closing prices
 plt.figure(figsize=(10, 5))
