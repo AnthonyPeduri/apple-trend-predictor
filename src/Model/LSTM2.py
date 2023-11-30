@@ -1,13 +1,13 @@
 import math
 import pandas as pd
 import numpy as np
-from Scraper import Scraper
 import tensorflow as tf
+from Scraper import Scraper
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 
-apple_stock = Scraper("aapl", "MAX")
+apple_stock = Scraper("aapl", "20y")
 apple_history = apple_stock.getAll()
 print(apple_history)
 # Load and preprocess the data
@@ -21,7 +21,7 @@ apple_history["AAPL_50"] = apple_history['Close'].rolling(50).mean()
 
 print(apple_history)
 apple = apple_history[["Close", "AAPL_10", "AAPL_30", "AAPL_50"]]
-split_date = '2021-01-01'
+split_date = '2020-01-01'
 apple_train = apple.loc[apple.index <= split_date].copy()
 apple_test = apple.loc[apple.index > split_date].copy()
 
@@ -66,7 +66,7 @@ history = model.fit(
     verbose=1,
     callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)]
 )
-
+model.save('apple_stock_model.h5')
 # Generate predictions
 y_pred = model.predict(X_test)
 
