@@ -51,10 +51,10 @@ X_test, y_test = Sequential_Input_LSTM(apple_test_scaled, n_input)
 # Define the LSTM model
 model = tf.keras.models.Sequential([
     tf.keras.layers.InputLayer((n_input, 1)),
-    tf.keras.layers.LSTM(300, activation="tanh", return_sequences=True),
+    tf.keras.layers.LSTM(500, activation="tanh", return_sequences=True),
     tf.keras.layers.Dropout(0.3),
     tf.keras.layers.LSTM(200, activation="tanh"),
-    tf.keras.layers.Dropout(0.1),
+    tf.keras.layers.Dropout(0.05),
     tf.keras.layers.Dense(40, activation="relu"),
     tf.keras.layers.Dense(1)
 ])
@@ -66,7 +66,7 @@ model.compile(optimizer='adam',
 # Train the model
 history = model.fit(
     X_train, y_train,
-    epochs=20,
+    epochs=50,
     batch_size=128,
     validation_data=(X_test, y_test),
     verbose=1,
