@@ -47,8 +47,9 @@ X_test, y_test = Sequential_Input_LSTM(apple_test_scaled, n_input)
 model = tf.keras.models.Sequential([
     tf.keras.layers.InputLayer((n_input, 1)),
     tf.keras.layers.LSTM(300, activation="tanh", return_sequences=True),
-    tf.keras.layers.Dropout(0.1),
+    tf.keras.layers.Dropout(0.3),
     tf.keras.layers.LSTM(200, activation="tanh"),
+    tf.keras.layers.Dropout(0.1),
     tf.keras.layers.Dense(40, activation="relu"),
     tf.keras.layers.Dense(1)
 ])
