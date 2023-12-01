@@ -1,5 +1,7 @@
 import yfinance as yf
 import pandas as pd
+import sys 
+
 
 class Scraper:
     def __init__(self, stock_name = "aapl", time_frame = "max", search_intesity = "1d"):
@@ -9,8 +11,13 @@ class Scraper:
         stock = yf.Ticker(stock_name)
         self.stock_historical = stock.history(period=time_frame, interval=search_intesity)
     
-    def getAll(self):
+    def get_all(self):
         return self.stock_historical
     
-    def getClose(self):
+    def get_close(self):
         return self.stock_historical['Close']
+    
+    def get_range(self, start_date, end_date, search_intesity = "1d"):
+        new_stock = yf.Ticker(self.stock_name)
+        self.new_stock_historical = new_stock.history(start = start_date, end = end_date, interval= search_intesity)
+        return self.new_stock_historical

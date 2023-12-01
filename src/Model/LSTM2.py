@@ -3,25 +3,30 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from Scraper import Scraper
+from datetime import datetime
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
+from dateutil.relativedelta import relativedelta
 
+#Calling upon our Scraper to grab historical  data on the Apple Stock
 apple_stock = Scraper("aapl", "20y")
-apple_history = apple_stock.getAll()
+apple_history = apple_stock.get_all()
+
 print(apple_history)
-# Load and preprocess the data
-# df = pd.read_csv("src/Data/sep100.csv")
-# df["Date"] = pd.to_datetime(df.Date)
-# df = df.set_index("Date")
-#top_df = df[["MSFT", "AAPL", "GOOG", "ACN"]].copy()
+
 apple_history["AAPL_10"] = apple_history['Close'].rolling(10).mean()
 apple_history["AAPL_30"] = apple_history['Close'].rolling(30).mean()
 apple_history["AAPL_50"] = apple_history['Close'].rolling(50).mean()
 
 print(apple_history)
+
 apple = apple_history[["Close", "AAPL_10", "AAPL_30", "AAPL_50"]]
-split_date = '2020-01-01'
+
+# Grab the date 3 years ago and set as split date (85/15 split)
+six_years_ago = datetime.now() - relativedelta(years=3)
+split_date =  six_years_ago.strftime('%Y-%m-%d')
+
 apple_train = apple.loc[apple.index <= split_date].copy()
 apple_test = apple.loc[apple.index > split_date].copy()
 
