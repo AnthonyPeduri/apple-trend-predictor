@@ -19,6 +19,7 @@ apple_history["AAPL_10"] = apple_history['Close'].rolling(10).mean()
 apple_history["AAPL_30"] = apple_history['Close'].rolling(30).mean()
 apple_history["AAPL_50"] = apple_history['Close'].rolling(50).mean()
 
+#Showcase data
 print(apple_history)
 
 apple = apple_history[["Close", "AAPL_10", "AAPL_30", "AAPL_50"]]
@@ -72,6 +73,7 @@ history = model.fit(
     verbose=1,
     callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)]
 )
+# Save Model
 model.save('apple_stock_model.h5')
 # Generate predictions
 y_pred = model.predict(X_test)
